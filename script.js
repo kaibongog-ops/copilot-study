@@ -10,17 +10,37 @@ const themeIcon = document.querySelector('.theme-icon');
 let todos = loadTodos();
 let editingId = null;
 
+function readStorage(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.warn(`localStorage.getItem failed for "${key}"`, error);
+    return null;
+  }
+}
+
+function writeStorage(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    console.warn(`localStorage.setItem failed for "${key}"`, error);
+    return false;
+  }
+}
+
 function loadTodos() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = readStorage(STORAGE_KEY);
     return saved ? JSON.parse(saved) : [];
-  } catch {
+  } catch (error) {
+    console.warn('Failed to parse saved todos from localStorage.', error);
     return [];
   }
 }
 
 function saveTodos() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  writeStorage(STORAGE_KEY, JSON.stringify(todos));
 }
 
 function applyTheme(theme) {
@@ -35,11 +55,11 @@ function applyTheme(theme) {
     themeToggle.setAttribute('aria-label', isDark ? 'ライトモードに切り替える' : 'ダークモードに切り替える');
   }
 
-  localStorage.setItem(THEME_KEY, theme);
+  writeStorage(THEME_KEY, theme);
 }
 
 function initTheme() {
-  const savedTheme = localStorage.getItem(THEME_KEY);
+  const savedTheme = readStorage(THEME_KEY);
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
   applyTheme(initialTheme);
