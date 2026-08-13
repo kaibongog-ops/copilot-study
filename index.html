@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple ToDo App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="topbar">
+        <h1>ToDo App</h1>
+        <button
+          id="theme-toggle"
+          class="theme-toggle"
+          type="button"
+          aria-label="ダークモードに切り替える"
+        >
+          <span class="theme-icon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+
+      <form id="todo-form" class="todo-form">
+        <input
+          id="todo-input"
+          type="text"
+          placeholder="やることを入力"
+          aria-label="ToDoの入力"
+          maxlength="100"
+        />
+        <button type="submit">追加</button>
+      </form>
+
+      <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
