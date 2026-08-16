@@ -212,3 +212,21 @@ themeToggle.addEventListener('click', () => {
 
 initTheme();
 renderTodos();
+
+// 完了済みタスクをすべて削除する関数
+function deleteCompletedTodos() {
+  const remainingTodos = todos.filter((todo) => !todo.completed);
+  todos = remainingTodos;
+  saveTodos();
+  renderTodos();
+}
+
+// 未完了のタスク数を数える関数
+function countPendingTodos() {
+  const pendingTodos = todos.filter((todo) => !todo.completed);
+  return pendingTodos.length;
+}
+
+function getTodoCount() {
+  return todos.length;
+}
