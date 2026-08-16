@@ -12,6 +12,14 @@ const themeIcon = document.querySelector('.theme-icon');
 let todos = loadTodos();
 let editingId = null;
 
+function generateTodoId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+
+  return `todo-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 function readStorage(key) {
   try {
     return localStorage.getItem(key);
@@ -219,7 +227,7 @@ form.addEventListener('submit', (event) => {
   }
 
   todos.unshift({
-    id: Date.now(),
+    id: generateTodoId(),
     text,
     completed: false,
   });
