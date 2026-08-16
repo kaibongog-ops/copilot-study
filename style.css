@@ -141,6 +141,34 @@ h1 {
   transform: translateY(1px);
 }
 
+.todo-summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: -6px 2px 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.todo-count-label {
+  letter-spacing: 0.02em;
+}
+
+.todo-count {
+  min-width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(79, 70, 229, 0.12);
+}
+
 .clear-completed-btn {
   width: 100%;
   border: 1px solid rgba(239, 68, 68, 0.2);

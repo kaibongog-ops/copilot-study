@@ -4,6 +4,7 @@ const THEME_KEY = 'simple-todo-theme';
 const form = document.querySelector('#todo-form');
 const input = document.querySelector('#todo-input');
 const list = document.querySelector('#todo-list');
+const countDisplay = document.querySelector('#todo-count');
 const clearCompletedButton = document.querySelector('#clear-completed-btn');
 const themeToggle = document.querySelector('#theme-toggle');
 const themeIcon = document.querySelector('.theme-icon');
@@ -75,6 +76,15 @@ function updateClearCompletedButton() {
   clearCompletedButton.hidden = !hasCompletedTodos;
 }
 
+function updateTodoCount() {
+  if (!countDisplay) {
+    return;
+  }
+
+  const pendingTodos = todos.filter((todo) => !todo.completed).length;
+  countDisplay.textContent = String(pendingTodos);
+}
+
 function renderTodos() {
   list.innerHTML = '';
 
@@ -84,10 +94,12 @@ function renderTodos() {
     emptyItem.textContent = 'まだタスクがありません';
     list.appendChild(emptyItem);
     updateClearCompletedButton();
+    updateTodoCount();
     return;
   }
 
   updateClearCompletedButton();
+  updateTodoCount();
 
   todos.forEach((todo) => {
     const item = document.createElement('li');
