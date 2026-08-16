@@ -4,6 +4,7 @@ const THEME_KEY = 'simple-todo-theme';
 const form = document.querySelector('#todo-form');
 const input = document.querySelector('#todo-input');
 const list = document.querySelector('#todo-list');
+const clearCompletedButton = document.querySelector('#clear-completed-btn');
 const themeToggle = document.querySelector('#theme-toggle');
 const themeIcon = document.querySelector('.theme-icon');
 
@@ -65,6 +66,15 @@ function initTheme() {
   applyTheme(initialTheme);
 }
 
+function updateClearCompletedButton() {
+  if (!clearCompletedButton) {
+    return;
+  }
+
+  const hasCompletedTodos = todos.some((todo) => todo.completed);
+  clearCompletedButton.hidden = !hasCompletedTodos;
+}
+
 function renderTodos() {
   list.innerHTML = '';
 
@@ -73,8 +83,11 @@ function renderTodos() {
     emptyItem.className = 'empty-state';
     emptyItem.textContent = 'まだタスクがありません';
     list.appendChild(emptyItem);
+    updateClearCompletedButton();
     return;
   }
+
+  updateClearCompletedButton();
 
   todos.forEach((todo) => {
     const item = document.createElement('li');
@@ -209,6 +222,17 @@ themeToggle.addEventListener('click', () => {
   const nextTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
   applyTheme(nextTheme);
 });
+
+if (clearCompletedButton) {
+  clearCompletedButton.addEventListener('click', () => {
+    todos = todos.filter((todo) => !todo.completed);
+    if (editingId !== null && todos.every((todo) => todo.id !== editingId)) {
+      editingId = null;
+    }
+    saveTodos();
+    renderTodos();
+  });
+}
 
 initTheme();
 renderTodos();
