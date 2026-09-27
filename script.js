@@ -5,12 +5,16 @@ const form = document.querySelector('#todo-form');
 const input = document.querySelector('#todo-input');
 const list = document.querySelector('#todo-list');
 const countDisplay = document.querySelector('#todo-count');
+const filterButtons = document.querySelectorAll('[data-filter]');
+const todoStatus = document.querySelector('#todo-status');
 const clearCompletedButton = document.querySelector('#clear-completed-btn');
 const themeToggle = document.querySelector('#theme-toggle');
 const themeIcon = document.querySelector('.theme-icon');
 
 let todos = loadTodos();
 let editingId = null;
+let editingDraft = null;
+let currentFilter = 'all';
 
 function generateTodoId() {
   if (window.crypto && typeof window.crypto.randomUUID === 'function') {
@@ -93,23 +97,46 @@ function updateTodoCount() {
   countDisplay.textContent = String(pendingTodos);
 }
 
+function updateFilterButtons() {
+  filterButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.filter === currentFilter));
+  });
+}
+
 function renderTodos() {
   list.innerHTML = '';
+  updateClearCompletedButton();
+  updateTodoCount();
+
+  const visibleTodos = todos.filter((todo) => {
+    if (currentFilter === 'active') {
+      return !todo.completed;
+    }
+
+    if (currentFilter === 'completed') {
+      return todo.completed;
+    }
+
+    return true;
+  });
 
   if (todos.length === 0) {
     const emptyItem = document.createElement('li');
     emptyItem.className = 'empty-state';
     emptyItem.textContent = 'まだタスクがありません';
     list.appendChild(emptyItem);
-    updateClearCompletedButton();
-    updateTodoCount();
     return;
   }
 
-  updateClearCompletedButton();
-  updateTodoCount();
+  if (visibleTodos.length === 0) {
+    const emptyItem = document.createElement('li');
+    emptyItem.className = 'empty-state';
+    emptyItem.textContent = '条件に一致するタスクがありません';
+    list.appendChild(emptyItem);
+    return;
+  }
 
-  todos.forEach((todo) => {
+  visibleTodos.forEach((todo) => {
     const item = document.createElement('li');
     const isEditing = editingId === todo.id;
     item.className = `todo-item${todo.completed ? ' completed' : ''}${isEditing ? ' editing' : ''}`;
@@ -118,8 +145,11 @@ function renderTodos() {
       const editInput = document.createElement('input');
       editInput.type = 'text';
       editInput.className = 'todo-edit-input';
-      editInput.value = todo.text;
+      editInput.value = editingDraft;
       editInput.setAttribute('aria-label', `タスク編集: ${todo.text}`);
+      editInput.addEventListener('input', () => {
+        editingDraft = editInput.value;
+      });
 
       const saveButton = document.createElement('button');
       saveButton.type = 'button';
@@ -134,6 +164,7 @@ function renderTodos() {
 
         todo.text = updatedText;
         editingId = null;
+        editingDraft = null;
         saveTodos();
         renderTodos();
       });
@@ -144,6 +175,7 @@ function renderTodos() {
       cancelButton.textContent = 'キャンセル';
       cancelButton.addEventListener('click', () => {
         editingId = null;
+        editingDraft = null;
         renderTodos();
       });
 
@@ -190,6 +222,7 @@ function renderTodos() {
     editButton.setAttribute('aria-label', `編集: ${todo.text}`);
     editButton.addEventListener('click', () => {
       editingId = todo.id;
+      editingDraft = todo.text;
       renderTodos();
     });
 
@@ -202,6 +235,7 @@ function renderTodos() {
       todos = todos.filter((task) => task.id !== todo.id);
       if (editingId === todo.id) {
         editingId = null;
+        editingDraft = null;
       }
       saveTodos();
       renderTodos();
@@ -234,8 +268,24 @@ form.addEventListener('submit', (event) => {
 
   input.value = '';
   input.focus();
+  if (todoStatus) {
+    todoStatus.textContent = currentFilter === 'completed'
+      ? 'タスクを追加しました。現在の「完了」表示には含まれません。'
+      : '';
+  }
   saveTodos();
   renderTodos();
+});
+
+filterButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    currentFilter = button.dataset.filter;
+    if (todoStatus) {
+      todoStatus.textContent = '';
+    }
+    updateFilterButtons();
+    renderTodos();
+  });
 });
 
 themeToggle.addEventListener('click', () => {
@@ -248,6 +298,7 @@ if (clearCompletedButton) {
     todos = todos.filter((todo) => !todo.completed);
     if (editingId !== null && todos.every((todo) => todo.id !== editingId)) {
       editingId = null;
+      editingDraft = null;
     }
     saveTodos();
     renderTodos();
@@ -255,6 +306,7 @@ if (clearCompletedButton) {
 }
 
 initTheme();
+updateFilterButtons();
 renderTodos();
 
 // 完了済みタスクをすべて削除する関数

@@ -169,6 +169,54 @@ h1 {
   border: 1px solid rgba(79, 70, 229, 0.12);
 }
 
+.todo-filters {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.todo-filter-btn {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  background: var(--card-alt);
+  color: var(--muted);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.todo-filter-btn:hover {
+  border-color: var(--primary);
+}
+
+.todo-filter-btn[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+body.dark-theme .todo-filter-btn[aria-pressed="true"] {
+  color: var(--bg);
+}
+
+.todo-filter-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.todo-status {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.todo-status:empty {
+  display: none;
+}
+
 .clear-completed-btn {
   width: 100%;
   border: 1px solid rgba(239, 68, 68, 0.2);
